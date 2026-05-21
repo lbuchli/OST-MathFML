@@ -22,7 +22,7 @@
             $f plus.minus g$, $f' plus.minus g'$,
             $f dot.op g$, $f' dot.op g + f dot.op g'$,
             $f / g$, $frac(f' dot.op g - f dot.op g', g^2)$,
-            $f(g)$, $f'(g) dot.op f(g')$,
+            $f(g)$, $f'(g) dot.op g'$,
         )
         #colbreak()
         #table(
@@ -32,7 +32,7 @@
             $log_a(f)$, $frac(f', f dot.op ln(a))$,
             $sin(f)$, $cos(f) dot.op f'$,
             $cos(f)$, $-sin(f) dot.op f'$,
-            $tan(f)$, $(1 + tan^2(f)) dot.op f' = frac(f', cos^2(f))$,
+            $tan(f)$, $ &(1 + tan^2(f)) dot.op f' \ &= frac(f', cos^2(f)) $,
         )
     ],
     [Integration],
@@ -121,8 +121,8 @@
     ) $),
     [Indicator function],
     block($ chi_[a; b](x) = cases(
-        0 quad "if" x in [a; b],
-        1 quad "if" x in.not [a; b]
+        1 quad "if" x in [a; b],
+        0 quad "if" x in.not [a; b]
     ) $),
     [Graph],
     block($
@@ -142,7 +142,7 @@
         #block($gradient f(x_1, x_2, ...) = (partial / (partial x_1) f, partial / (partial x_2) f, ...)$)
         #block($
             gradient (f + g) &= gradient f + gradient g &quad gradient (f - g) &= gradient f - gradient g \
-            gradient (f dot g) &= g gradient f + f gradient g &quad gradient f/g &= frac(g gradient f - f gradient g, g^2) \
+            gradient (f dot g) &= g dot gradient f + f dot gradient g &quad gradient f/g &= frac(g dot gradient f - f dot gradient g, g^2) \
 
         $)
     ],
@@ -156,14 +156,15 @@
     table(
         columns: (auto, auto),
         $x_0$, [initial guess],
-        $x_(i+1) = x_i - frac(f(x_n), f'(x_n))$, [step],
+        $x_(i+1) = x_i - frac(f(x_i), f'(x_i))$, [step],
     ),
     [Jacobian Matrix],
     stack(dir: ltr,
         $
             f : RR^n -> RR^m quad x_0 in RR^n \
             J_f (x_0) : RR^(m times n) \
-            J_f (bold(x_0))_(i j) = frac(partial, partial x_j) f_i (x_0)
+            J_f (bold(x_0))_(i j) = frac(partial, partial x_j) f_i (x_0) \
+            #[Rows: $i$, Columns: $j$]
         $,
         diagram(spacing: (5mm, 5mm), {
             let (ern, erm, erk, mrn, mrm, mrk) = ((0,0), (0,1), (0,2), (4,0), (4,1), (4,2))
@@ -220,7 +221,7 @@
         bold(V) : Omega -> RR^n quad mu in RR^n quad bold(Sigma) in RR^(n times n) quad bold(V) ~ 𝓝(mu, Sigma) \
         f_bold(V)(bold(v)) = frac(1, sqrt((2 pi)^n det bold(Sigma))) e^(-1/2 (bold(v)-mu)^T bold(Sigma)^(-1)(bold(v)-mu)) \
         mu approx overline(bold(x)) = 1/N sum_(i=1)^N bold(x)_i quad
-        Sigma approx frac(1, N-1) sum_(i=1)^N (bold(v)_i - overline(bold(v))) (bold(v)_i - overline(bold(v))^T)
+        Sigma approx frac(1, N-1) sum_(i=1)^N (bold(v)_i - overline(bold(v))) (bold(v)_i - overline(bold(v)))^T
     $),
     table.hline(stroke: 0.5pt),
     [Gauss-Jordan Algorithm],
@@ -246,15 +247,15 @@
     ],
     [Completing Squares],
     [
-        Goal: convert $a x^2 + b x + c$ into $a(x+b/2)^2 + k$.
+        Goal: convert $a x^2 + b x + c$ into $a(x+frac(b,2a))^2 + k$.
         #table(
             inset: 0pt,
             columns: (auto, auto, auto),
             row-gutter: 4pt,
-            enum.item(1)[], [factor out $a$], $a(x^2 + b x) + c$,
-            enum.item(2)[], [Add and subtract $h = (b/2)^2$ #h(1em)], $a(x^2 + b x + h - h) + c$,
-            enum.item(3)[], [Move $- h$ outside parens], $a(x^2 + b x + h) - a h + c$,
-            enum.item(4)[], [Factor], $a(x + b/2)^2 - a h + c$
+            enum.item(1)[], [factor out $a$], $a(x^2 + b/a x) + c$,
+            enum.item(2)[], [Add and subtract $h = (frac(b, 2a))^2$ #h(1em)], $a(x^2 + b/a x + h - h) + c$,
+            enum.item(3)[], [Move $- h$ outside parens], $a(x^2 + b/a x + h) - a h + c$,
+            enum.item(4)[], [Factor], $a(x + frac(b, 2a))^2 - a h + c$
         )
     ],
     [Finding extrema],
@@ -265,35 +266,11 @@
         + Use completing squares one variable at a time.
         + Substitue to get a polynomial of the form $c_1a^2 + c_2b^2 + ...$. The sign of the constants defines the definiteness.
         $
-        & forall v in RR^n\{0\} . q_H(v) > 0 quad &&->&& "local maximum (positive definite)" \
-        & forall v in RR^n\{0\} . q_H(v) < 0 &&->&& "local minimum (negative definite)" \
+        & forall v in RR^n without \{0\} . q_H(v) > 0 quad &&->&& "local minimum (positive definite)" \
+        & forall v in RR^n without \{0\} . q_H(v) < 0 &&->&& "local maximum (negative definite)" \
         & "both, depending on" v &&->&& "saddle point (indefinite)"
         $
     ],
     table.hline(stroke: 0.5pt),
     table.cell(colspan: 2)[Platz für Panik]
 )
-
-/*
-== Curves
-
-If all $n$ components of some curve $c : I -> RR^n$ are continuous, the curve is continuous. Limits, derivatives and linearization ($l_t (x) = f'(t) x + f(t) $) can be computed componentwise.
-
-For some curve $c : I -> RR^n$ and some arbitrary bijective $h : I -> I$, $im (c compose h) = im c$.
-
-== Hyper Surfaces
-
-Some function $f : D -> RR$, where
-- Differentiable everywhere
-- Something with $epsilon$
-
-#table(
-    columns: (25%, auto),
-    [Partial derivative of $i$th coordinate function],
-    block($
-
-    $)
-)
-
-*/
-
